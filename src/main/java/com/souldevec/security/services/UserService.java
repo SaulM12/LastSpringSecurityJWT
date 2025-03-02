@@ -5,6 +5,7 @@ import com.souldevec.security.repositories.UserRepository;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,7 +23,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         User user = userRepository.findByUserName(userName)
-                .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().getName().toString());
 
         return new org.springframework.security.core.userdetails.User(
@@ -32,11 +33,22 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    public boolean existsByUserName(String username){
+    public User findByUserName(String userName) {
+        return userRepository.findByUserName(userName)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    public boolean existsByUserName(String username) {
         return userRepository.existsByUserName(username);
     }
 
-    public void save(User user){
+    public void save(User user) {
         userRepository.save(user);
+    }
+
+    public User getUserDetails() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return findByUserName(username);
     }
 }
