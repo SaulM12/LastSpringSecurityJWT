@@ -46,7 +46,7 @@ public class AuthService {
 
         User user = userService.findByUserName(username);
 
-        return user.getRole().toString();
+        return user.getRole().getName().toString();
     }
 
     public void registerUser(NewUserDto newUserDto) {
@@ -57,5 +57,9 @@ public class AuthService {
         Role roleUser = roleRepository.findByName(RoleList.ROLE_USER).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
         User user = new User(newUserDto.getUserName(), passwordEncoder.encode(newUserDto.getPassword()), roleUser);
         userService.save(user);
+    }
+
+    public void logout(HttpServletResponse response){
+        cookieService.deleteCookie("jwt",response);
     }
 }

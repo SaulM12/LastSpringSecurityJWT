@@ -1,5 +1,6 @@
 package com.souldevec.security.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String userName;
 
+    @JsonIgnore
     @NotBlank
     @Column(nullable = false)
     private String password;
